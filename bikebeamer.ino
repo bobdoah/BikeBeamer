@@ -18,7 +18,7 @@ const IPAddress IP(192, 168, 0, 1);
 
 // MPU, NeoPixel and server objects
 MPU6050 mpu(Wire);
-Adafruit_NeoPixel neopixels(LED_COUNT * 8, NEOPIXELS_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel neopixels(LED_COUNT * 2, NEOPIXELS_PIN, NEO_GRB + NEO_KHZ800);
 DNSServer dns;
 WebServer server(80);
 
@@ -65,30 +65,45 @@ void saveImageName(int storageSlot, String newName);
 
 // Setup function
 void setup() {
+    Serial.begin(115200);
     // Confirm successful boot
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
     delay(500);
     digitalWrite(LED_BUILTIN, LOW);
     delay(500);
+    Serial.println("setup");
     // Initialize MPU
     Wire.begin();
+    Serial.println("wire.begin");
     mpu.begin();
+    Serial.println("mpu.begin");
     mpu.calcGyroOffsets();
+    Serial.println("mpu.calcgyrooffsets");
     // Initialize filesystem and memory
     LittleFS.begin();
+    Serial.println("littlefs.begin");
     loadSettings();
+    Serial.println("loadSettings");
     if (displayMode < STORAGE_SLOT_COUNT) {
+        Serial.println("displayMode > STORAGE_SLOT_COUNT");
         loadImage(displayMode, 0);
+        Serial.println("loadImage");
     } else {
+        Serial.println("displayMode <= STORAGE_SLOT_COUNT");
         loadImage(displayMode - STORAGE_SLOT_COUNT, 0);
         loadImage((displayMode - (STORAGE_SLOT_COUNT - 1)) % STORAGE_SLOT_COUNT, 1);
+        Serial.println("loadImage");
     }
     // Initiliaze NeoPixels
     neopixels.begin();
+    Serial.println("neopixels.begin");
     neopixels.setBrightness(brightness);
+    Serial.println("neopixels.setBrightness");
     neopixels.clear();
+    Serial.println("neopixels.clear");
     neopixels.show();
+    Serial.println("neopixels.show");
     // Initialize WiFi network
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(IP, IP, IPAddress(255, 255, 255, 0));
